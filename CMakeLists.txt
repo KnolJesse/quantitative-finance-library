@@ -6,17 +6,16 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(QuantFinance)
+include(FetchContent)
 
-target_sources(
-    QuantFinance
-    PRIVATE
-        src/Version.cpp
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
 )
 
-target_include_directories(
-    QuantFinance
-    PUBLIC
-        include
-		
-)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+
+add_subdirectory(src)
+add_subdirectory(tests)
