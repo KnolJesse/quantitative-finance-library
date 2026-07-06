@@ -1,0 +1,20 @@
+# Build directories
+out/
+build/
+
+# Visual Studio
+.vs/
+
+# CMake cache
+CMakeUserPresets.json
+
+# Compiler outputs
+*.obj
+*.pdb
+*.ilk
+*.lib
+*.dll
+*.exe
+
+# Misc
+*.user
