@@ -1,3 +1,5 @@
+#pragma once 
+
 #include <cstdint>
 #include <random>
 
@@ -8,7 +10,6 @@ namespace qf
     public:
         RandomGenerator() = default;
 
-    public:
         explicit RandomGenerator(std::uint64_t seed) noexcept
             : m_engine(seed)
         {
@@ -36,5 +37,4 @@ namespace qf
     private:
         std::mt19937_64 m_engine;
     };
-
 }

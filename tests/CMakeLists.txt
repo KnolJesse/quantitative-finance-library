@@ -2,6 +2,9 @@ add_executable(QuantFinanceTests
     VersionTest.cpp
     RunningStatsTest.cpp
     RandomGeneratorTest.cpp
+    GeometricBrownianMotionTest.cpp
+    PathTest.cpp
+    PathGeneratorTest.cpp
 )
 
 target_link_libraries(QuantFinanceTests
