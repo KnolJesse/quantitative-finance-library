@@ -7,13 +7,13 @@
 
 namespace qf
 {
-    class EuropeanCallPayoff final : public Payoff
+    class EuropeanPutPayoff final : public Payoff
     {
     public:
-        explicit EuropeanCallPayoff(double strike) noexcept
+        explicit EuropeanPutPayoff(double strike) noexcept
             : m_strike(strike)
         {
-            assert(strike > 0.0 && "strike must be greater than zero"); 
+            assert(strike > 0.0 && "strike must be greater than zero");
         }
 
     public:

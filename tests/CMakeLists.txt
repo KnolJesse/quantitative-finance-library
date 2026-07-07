@@ -9,6 +9,8 @@ add_executable(QuantFinanceTests
     MonteCarloPricerTest.cpp
     BlackScholesPricerTest.cpp
     PricingComparisonTest.cpp
+    BlackScholesGreeksTest.cpp
+    EuropeanPutPayoffTest.cpp
 )
 
 target_link_libraries(QuantFinanceTests

@@ -37,32 +37,136 @@ namespace qf
                 return std::exp(-m_riskFreeRate * m_maturity) * std::max(terminalPrice - m_strike, 0.0);
             }
 
-            const double sqrtT      = std::sqrt(m_maturity);
-            const double sigmaSqrtT = m_volatility * sqrtT;
-
-            const double d1 = 
-                (std::log(m_spot / m_strike)
-                +
-                (m_riskFreeRate + 0.5 * m_volatility * m_volatility)
-                *
-                m_maturity)
-                /
-                sigmaSqrtT;
-
-            const double d2 = 
-                d1 - sigmaSqrtT;
+            const BlackScholesTerms terms = ComputeTerms(); 
 
             return
-                m_spot * NormalCDF(d1)
+                m_spot * NormalCDF(terms.D1)
                 -
-                m_strike * std::exp(-m_riskFreeRate * m_maturity) * NormalCDF(d2);
+                m_strike * std::exp(-m_riskFreeRate * m_maturity) * NormalCDF(terms.D2);
         }
+
+        [[nodiscard]]
+        double Delta() const
+        {
+            if (m_volatility == 0.0)
+            {
+                const double terminalPrice = m_spot * std::exp(m_riskFreeRate * m_maturity);
+
+                return (terminalPrice > m_strike) ? 1.0 : 0.0;
+            }
+
+            const BlackScholesTerms terms = ComputeTerms();
+
+            return NormalCDF(terms.D1);
+        }
+
+        [[nodiscard]]
+        double Gamma() const
+        {
+            if (m_volatility == 0.0)
+            {
+                return 0.0;
+            }
+
+            const BlackScholesTerms terms = ComputeTerms();
+
+            return NormalPDF(terms.D1) / (m_spot * m_volatility * std::sqrt(m_maturity));
+        }
+
+        [[nodiscard]]
+        double Vega() const
+        {
+            if (m_volatility == 0.0)
+            {
+                return 0.0;
+            }
+
+            const BlackScholesTerms terms = ComputeTerms();
+
+            return m_spot * NormalPDF(terms.D1) * std::sqrt(m_maturity);
+        }
+
+        [[nodiscard]]
+        double Theta() const
+        {
+            if (m_volatility == 0.0)
+            {
+                return 0.0;
+            }
+
+            const BlackScholesTerms terms = ComputeTerms();
+
+            const double firstTerm =
+                -m_spot * NormalPDF(terms.D1) * m_volatility
+                /
+                (2.0 * std::sqrt(m_maturity));
+
+            const double secondTerm =
+                -m_riskFreeRate * m_strike * std::exp(-m_riskFreeRate * m_maturity)
+                *
+                NormalCDF(terms.D2);
+
+            return firstTerm + secondTerm;
+        }
+
+        [[nodiscard]]
+        double Rho() const
+        {
+            if (m_volatility == 0.0)
+            {
+                return 0.0;
+            }
+
+            const BlackScholesTerms terms = ComputeTerms();
+
+            return m_strike * m_maturity * std::exp(-m_riskFreeRate * m_maturity)
+                *
+                NormalCDF(terms.D2);
+        }
+
+    private:
+        struct BlackScholesTerms
+        {
+            double D1 = 0.0;
+            double D2 = 0.0;
+        };
 
     private:
         [[nodiscard]]
         static double NormalCDF(double x) noexcept
         {
             return 0.5 * std::erfc(-x / std::sqrt(2.0));
+        }
+
+        [[nodiscard]]
+        static double NormalPDF(double x) noexcept
+        {
+            constexpr double inverseSqrtTwoPi = 0.39894228040143267793994605993438; 
+
+            return inverseSqrtTwoPi * std::exp(-0.5 * x * x); 
+        }
+
+        [[nodiscard]]
+        BlackScholesTerms ComputeTerms() const noexcept
+        {
+            const double sqrtT = std::sqrt(m_maturity);
+            const double sigmaSqrtT = m_volatility * sqrtT; 
+
+            BlackScholesTerms terms; 
+
+            terms.D1 =
+                (std::log(m_spot / m_strike)
+                +
+                (m_riskFreeRate + 0.5 * m_volatility * m_volatility)
+                *
+                m_maturity)
+                /
+                sigmaSqrtT; 
+
+            terms.D2 =
+                terms.D1 - sigmaSqrtT; 
+
+            return terms; 
         }
 
     private:

@@ -1,4 +1,4 @@
-#include "qf/Payoffs/EuropeanCallPayoff.hpp"
+#include "qf/Payoffs/EuropeanPutPayoff.hpp"
 #include "qf/Payoffs/Payoff.hpp"
 
 #include <algorithm>
@@ -6,12 +6,12 @@
 
 namespace qf
 {
-	double EuropeanCallPayoff::Evaluate(const Path& path) const
+	double EuropeanPutPayoff::Evaluate(const Path& path) const
 	{
 		assert(path.Size() > 0 && "path must contain at least one value.");
 
 		const double terminalPrice = path.Back();
 
-		return std::max(terminalPrice - m_strike, 0.0); 
+		return std::max(m_strike - terminalPrice, 0.0);
 	}
 }
