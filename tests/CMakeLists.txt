@@ -5,6 +5,10 @@ add_executable(QuantFinanceTests
     GeometricBrownianMotionTest.cpp
     PathTest.cpp
     PathGeneratorTest.cpp
+    EuropeanCallPayoffTest.cpp
+    MonteCarloPricerTest.cpp
+    BlackScholesPricerTest.cpp
+    PricingComparisonTest.cpp
 )
 
 target_link_libraries(QuantFinanceTests

@@ -30,6 +30,18 @@ namespace qf
 		}
 
 		[[nodiscard]]
+		double Front() const
+		{
+			return m_values.front(); 
+		}
+
+		[[nodiscard]]
+		double Back() const
+		{
+			return m_values.back(); 
+		}
+
+		[[nodiscard]]
 		const std::vector<double>& Values() const noexcept
 		{
 			return m_values; 

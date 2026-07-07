@@ -7,9 +7,9 @@ namespace qf
 {
     double GeometricBrownianMotion::Evolve(double currentPrice, double timeStep, RandomGenerator& randomGenerator) const
     {
-        assert(currentPrice > 0 && "currentPrice must be greater than zero"); 
-        assert(timeStep > 0 && "timeStep must be greater than zero"); 
-        assert(m_volatility >= 0 && "volatility must be non-negative"); 
+        assert(currentPrice > 0 && "currentPrice must be greater than zero."); 
+        assert(timeStep > 0 && "timeStep must be greater than zero."); 
+        assert(m_volatility >= 0 && "volatility must be non-negative."); 
 
         const double standardNormal = randomGenerator.Normal();
 
