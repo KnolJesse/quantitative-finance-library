@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "qf/Models/GeometricBrownianMotion.hpp"
-#include "qf/MonteCarlo/PathGenerator.hpp"
+#include "qf/PathGeneration/PathGenerator.hpp"
 #include "qf/Payoffs/EuropeanCallPayoff.hpp"
 #include "qf/Pricing/BlackScholesPricer.hpp"
 #include "qf/Pricing/MonteCarloPricer.hpp"
@@ -35,20 +35,17 @@ TEST(PricingComparison, MonteCarloMatchesBlackScholes)
 
     qf::GeometricBrownianMotion model(riskFreeRate, volatility);
 
-    qf::PathGenerator<qf::GeometricBrownianMotion> pathGenerator(
-        model,
-        randomGenerator,
-        spot,
-        timeStep,
-        numberOfSteps);
-
     qf::EuropeanCallPayoff payoff(strike);
 
-    qf::MonteCarloPricer<qf::GeometricBrownianMotion> monteCarloPricer(
-        pathGenerator,
+    qf::MonteCarloPricer monteCarloPricer(
+        model,
+        randomGenerator,
         payoff,
+        spot,
         riskFreeRate,
         maturity,
+        timeStep,
+        numberOfSteps,
         simulations);
 
     const qf::PricingResult monteCarloResult = monteCarloPricer.Price();

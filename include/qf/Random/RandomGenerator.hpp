@@ -34,6 +34,16 @@ namespace qf
             return m_normalDistribution(m_engine);
         }
 
+        [[nodiscard]]
+        RandomGenerator Clone() const noexcept
+        {
+            RandomGenerator clone;
+
+            clone.m_engine = m_engine; 
+
+            return clone;
+        }
+
     private:
         std::mt19937_64 m_engine;
         std::normal_distribution<double> m_normalDistribution{ 0.0, 1.0 };

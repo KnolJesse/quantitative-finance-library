@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "qf/MonteCarlo/Path.hpp"
+#include "qf/PathGeneration/Path.hpp"
 #include "qf/Payoffs/EuropeanCallPayoff.hpp"
 
 TEST(EuropeanCallPayoff, OutOfTheMoney)

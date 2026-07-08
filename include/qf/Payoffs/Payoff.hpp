@@ -1,6 +1,6 @@
 #pragma once
 
-#include "qf/MonteCarlo/Path.hpp"
+#include "qf/PathGeneration/Path.hpp"
 
 namespace qf
 {

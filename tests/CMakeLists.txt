@@ -1,16 +1,16 @@
 add_executable(QuantFinanceTests
-    VersionTest.cpp
-    RunningStatsTest.cpp
-    RandomGeneratorTest.cpp
-    GeometricBrownianMotionTest.cpp
-    PathTest.cpp
-    PathGeneratorTest.cpp
-    EuropeanCallPayoffTest.cpp
-    MonteCarloPricerTest.cpp
-    BlackScholesPricerTest.cpp
-    PricingComparisonTest.cpp
-    BlackScholesGreeksTest.cpp
-    EuropeanPutPayoffTest.cpp
+    Statistics/RunningStatsTest.cpp
+    Random/RandomGeneratorTest.cpp
+    Models/GeometricBrownianMotionTest.cpp
+    PathGeneration/PathTest.cpp
+    PathGeneration/PathGeneratorTest.cpp
+    Payoffs/EuropeanCallPayoffTest.cpp
+    Pricing/MonteCarloPricerTest.cpp
+    Pricing/BlackScholesPricerTest.cpp
+    Pricing/PricingComparisonTest.cpp
+    Pricing/BlackScholesGreeksTest.cpp
+    Payoffs/EuropeanPutPayoffTest.cpp
+    Pricing/MonteCarloGreeksTest.cpp
 )
 
 target_link_libraries(QuantFinanceTests

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "qf/MonteCarlo/Path.hpp"
+#include "qf/PathGeneration/Path.hpp"
 
 
 TEST(Path, StoresAndReturnsValues)

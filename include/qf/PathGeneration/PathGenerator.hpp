@@ -1,6 +1,6 @@
 #pragma once
 
-#include "qf/MonteCarlo/Path.hpp"
+#include "qf/PathGeneration/Path.hpp"
 #include "qf/Random/RandomGenerator.hpp"
 
 #include <cstddef>
@@ -15,32 +15,26 @@ namespace qf
     public:
         PathGenerator(
             const Model& model, 
-            RandomGenerator& randomGenerator,
-            double initialValue,
-            double timeStep,
-            std::size_t numberOfSteps) noexcept
+            RandomGenerator& randomGenerator) noexcept
             : m_model(model)
             , m_randomGenerator(randomGenerator)
-            , m_initialValue(initialValue)
-            , m_timeStep(timeStep)
-            , m_numberOfSteps(numberOfSteps)
         {
         }
 
     public:
         [[nodiscard]]
-        Path Generate()
+        Path Generate(double spot, double timeStep, std::size_t numberOfSteps) const 
         {
             std::vector<double> values;
-            values.reserve(m_numberOfSteps + 1);
+            values.reserve(numberOfSteps + 1);
 
-            double currentValue = m_initialValue;
+            double currentValue = spot;
 
             values.push_back(currentValue);
 
-            for (std::size_t step = 0; step < m_numberOfSteps; ++step)
+            for (std::size_t step = 0; step < numberOfSteps; ++step)
             {
-                currentValue = m_model.Evolve(currentValue, m_timeStep, m_randomGenerator);
+                currentValue = m_model.Evolve(currentValue, timeStep, m_randomGenerator);
 
                 values.push_back(currentValue);
             }
@@ -51,9 +45,5 @@ namespace qf
     private:
         const Model& m_model;
         RandomGenerator& m_randomGenerator;
-
-        double m_initialValue = 0.0;
-        double m_timeStep = 0.0;
-        std::size_t m_numberOfSteps = 0;
     };
 }

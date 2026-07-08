@@ -39,3 +39,15 @@ TEST(RandomGenerator, NormalDistributionHasExpectedStatistics)
     EXPECT_NEAR(stats.Mean(), 0.0, 0.01);
     EXPECT_NEAR(stats.Variance(), 1.0, 0.02);
 }
+
+TEST(RandomGenerator, CloneProducesIdenticalSequence)
+{
+    qf::RandomGenerator original(42);
+
+    qf::RandomGenerator clone = original.Clone();
+
+    for (std::size_t i = 0; i < 100; ++i)
+    {
+        EXPECT_DOUBLE_EQ(original.Normal(), clone.Normal());
+    }
+}
