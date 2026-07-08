@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "qf/Models/GeometricBrownianMotion.hpp"
-#include "qf/MonteCarlo/MonteCarloPricer.hpp"
+#include "qf/Pricing/MonteCarloPricer.hpp"
 #include "qf/MonteCarlo/PathGenerator.hpp"
 #include "qf/Payoffs/EuropeanCallPayoff.hpp"
 #include "qf/Random/RandomGenerator.hpp"

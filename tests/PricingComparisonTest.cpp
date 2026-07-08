@@ -1,11 +1,12 @@
 #include <gtest/gtest.h>
 
 #include "qf/Models/GeometricBrownianMotion.hpp"
-#include "qf/MonteCarlo/MonteCarloPricer.hpp"
 #include "qf/MonteCarlo/PathGenerator.hpp"
-#include "qf/Pricing/BlackScholesPricer.hpp"
-#include "qf/Pricing/PricingResult.hpp"
 #include "qf/Payoffs/EuropeanCallPayoff.hpp"
+#include "qf/Pricing/BlackScholesPricer.hpp"
+#include "qf/Pricing/MonteCarloPricer.hpp"
+#include "qf/Pricing/PricingResult.hpp"
+#include "qf/Products/OptionType.hpp"
 #include "qf/Random/RandomGenerator.hpp"
 
 TEST(PricingComparison, MonteCarloMatchesBlackScholes)
@@ -21,6 +22,7 @@ TEST(PricingComparison, MonteCarloMatchesBlackScholes)
     constexpr std::size_t simulations = 1'000'000;
 
     qf::BlackScholesPricer analyticPricer(
+        qf::OptionType::Call, 
         spot,
         strike,
         riskFreeRate,

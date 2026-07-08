@@ -1,5 +1,7 @@
 #pragma once
 
+#include "qf/Products/OptionType.hpp"
+
 #include <cassert>
 #include <cmath>
 
@@ -9,12 +11,14 @@ namespace qf
     {
     public:
         BlackScholesPricer(
+            OptionType optionType,
             double spot,
             double strike,
             double riskFreeRate,
             double volatility,
             double maturity) noexcept
-            : m_spot(spot)
+            : m_optionType(optionType)
+            , m_spot(spot)
             , m_strike(strike)
             , m_riskFreeRate(riskFreeRate)
             , m_volatility(volatility)
@@ -30,19 +34,18 @@ namespace qf
         [[nodiscard]]
         double Price() const
         {
-            if (m_volatility == 0.0)
+            switch (m_optionType)
             {
-                const double terminalPrice = m_spot * std::exp(m_riskFreeRate * m_maturity);
+            case OptionType::Call:
+                return CallPrice();
 
-                return std::exp(-m_riskFreeRate * m_maturity) * std::max(terminalPrice - m_strike, 0.0);
+            case OptionType::Put:
+                return PutPrice();
             }
 
-            const BlackScholesTerms terms = ComputeTerms(); 
+            assert(false && "Option type not supported"); 
 
-            return
-                m_spot * NormalCDF(terms.D1)
-                -
-                m_strike * std::exp(-m_riskFreeRate * m_maturity) * NormalCDF(terms.D2);
+            return 0.0;
         }
 
         [[nodiscard]]
@@ -52,12 +55,23 @@ namespace qf
             {
                 const double terminalPrice = m_spot * std::exp(m_riskFreeRate * m_maturity);
 
-                return (terminalPrice > m_strike) ? 1.0 : 0.0;
+                return (terminalPrice > m_strike) ? 1.0 : 0.0; //??? 
             }
 
             const BlackScholesTerms terms = ComputeTerms();
 
-            return NormalCDF(terms.D1);
+            switch (m_optionType)
+            {
+            case OptionType::Call:
+                return NormalCDF(terms.D1);
+
+            case OptionType::Put:
+                return NormalCDF(terms.D1) - 1.0;
+            }
+
+            assert(false && "Option type not supported");
+
+            return 0.0;
         }
 
         [[nodiscard]]
@@ -96,17 +110,31 @@ namespace qf
 
             const BlackScholesTerms terms = ComputeTerms();
 
-            const double firstTerm =
+            const double firstThetaTerm =
                 -m_spot * NormalPDF(terms.D1) * m_volatility
                 /
-                (2.0 * std::sqrt(m_maturity));
+                (2.0 * std::sqrt(m_maturity)); 
 
-            const double secondTerm =
-                -m_riskFreeRate * m_strike * std::exp(-m_riskFreeRate * m_maturity)
-                *
-                NormalCDF(terms.D2);
+            switch (m_optionType)
+            {
+            case OptionType::Call:
+                return firstThetaTerm 
+                    - 
+                    m_riskFreeRate * m_strike * std::exp(-m_riskFreeRate * m_maturity)
+                    *
+                    NormalCDF(terms.D2); 
+            
+            case OptionType::Put:
+                return firstThetaTerm 
+                    +
+                    m_riskFreeRate * m_strike * std::exp(-m_riskFreeRate * m_maturity)
+                    *
+                    NormalCDF(-terms.D2);
+            }
 
-            return firstTerm + secondTerm;
+            assert(false && "Option type not supported");
+
+            return 0.0; 
         }
 
         [[nodiscard]]
@@ -119,9 +147,24 @@ namespace qf
 
             const BlackScholesTerms terms = ComputeTerms();
 
-            return m_strike * m_maturity * std::exp(-m_riskFreeRate * m_maturity)
-                *
-                NormalCDF(terms.D2);
+            switch (m_optionType)
+            {
+            case OptionType::Call:
+                return 
+                    m_strike * m_maturity * std::exp(-m_riskFreeRate * m_maturity)
+                    *
+                    NormalCDF(terms.D2);
+
+            case OptionType::Put:
+                return 
+                    -m_strike * m_maturity * std::exp(-m_riskFreeRate * m_maturity)
+                    *
+                    NormalCDF(-terms.D2);
+            }
+
+            assert(false && "Option type not supported");
+
+            return 0.0;
         }
 
     private:
@@ -132,6 +175,42 @@ namespace qf
         };
 
     private:
+        [[nodiscard]]
+        double CallPrice() const
+        {
+            if (m_volatility == 0.0)
+            {
+                const double terminalPrice = m_spot * std::exp(m_riskFreeRate * m_maturity);
+
+                return std::exp(-m_riskFreeRate * m_maturity) * std::max(terminalPrice - m_strike, 0.0);
+            }
+
+            const BlackScholesTerms terms = ComputeTerms();
+
+            return
+                m_spot * NormalCDF(terms.D1)
+                -
+                m_strike * std::exp(-m_riskFreeRate * m_maturity) * NormalCDF(terms.D2);
+        }
+
+        [[nodiscard]]
+        double PutPrice() const
+        {
+            if (m_volatility == 0.0)
+            {
+                const double terminalPrice = m_spot * std::exp(m_riskFreeRate * m_maturity);
+
+                return std::exp(-m_riskFreeRate * m_maturity) * std::max(m_strike - terminalPrice, 0.0);
+            }
+
+            const BlackScholesTerms terms = ComputeTerms();
+
+            return
+                m_strike * std::exp(-m_riskFreeRate * m_maturity) * NormalCDF(-terms.D2)
+                -
+                m_spot * NormalCDF(-terms.D1); 
+        }
+
         [[nodiscard]]
         static double NormalCDF(double x) noexcept
         {
@@ -170,6 +249,7 @@ namespace qf
         }
 
     private:
+        OptionType m_optionType = OptionType::Call; 
         double m_spot = 0.0;
         double m_strike = 0.0;
         double m_riskFreeRate = 0.0;

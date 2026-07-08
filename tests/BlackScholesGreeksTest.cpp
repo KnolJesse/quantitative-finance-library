@@ -1,22 +1,33 @@
 #include <gtest/gtest.h>
 
 #include "qf/Pricing/BlackScholesPricer.hpp"
+#include "qf/Products/OptionType.hpp"
 
 class BlackScholesGreeksTest : public ::testing::Test
 {
 protected:
-    static constexpr double Spot = 100.0;
-    static constexpr double Strike = 100.0;
-    static constexpr double RiskFreeRate = 0.05;
-    static constexpr double Volatility = 0.20;
-    static constexpr double Maturity = 1.0;
+    static constexpr double spot = 100.0;
+    static constexpr double strike = 100.0;
+    static constexpr double riskFreeRate = 0.05;
+    static constexpr double volatility = 0.20;
+    static constexpr double maturity = 1.0;
 
-    qf::BlackScholesPricer Pricer{
-        Spot,
-        Strike,
-        RiskFreeRate,
-        Volatility,
-        Maturity
+    const qf::BlackScholesPricer callPricer{
+        qf::OptionType::Call, 
+        spot,
+        strike,
+        riskFreeRate,
+        volatility,
+        maturity
+    };
+
+    const qf::BlackScholesPricer putPricer{
+        qf::OptionType::Put,
+        spot,
+        strike,
+        riskFreeRate,
+        volatility,
+        maturity
     };
 };
 
@@ -24,37 +35,117 @@ protected:
 // Theta is quoted per year (not per day) 
 // Rho is quoted per unit interest rate (not per 1%)
 
-TEST_F(BlackScholesGreeksTest, Delta)
+TEST_F(BlackScholesGreeksTest, CallDelta)
 {
-    constexpr double ReferenceDelta = 0.6368;
+    constexpr double referenceDelta = 0.6368;
 
-    EXPECT_NEAR(Pricer.Delta(), ReferenceDelta, 1e-4);
+    EXPECT_NEAR(callPricer.Delta(), referenceDelta, 1e-4);
 }
 
-TEST_F(BlackScholesGreeksTest, Gamma)
-{
-    constexpr double ReferenceGamma = 0.018762;
+//TEST_F(BlackScholesGreeksTest, PutDelta)
+//{
+//    constexpr double referenceDelta = -0.3632;
+//
+//    EXPECT_NEAR(putPricer.Delta(), referenceDelta, 1e-4);
+//}
 
-    EXPECT_NEAR( Pricer.Gamma(), ReferenceGamma, 1e-6);
+
+TEST_F(BlackScholesGreeksTest, CallGamma)
+{
+    constexpr double referenceGamma = 0.018762;
+
+    EXPECT_NEAR(callPricer.Gamma(), referenceGamma, 1e-6);
 }
 
-TEST_F(BlackScholesGreeksTest, Vega)
-{
-    constexpr double ReferenceVega = 37.5240;
+//TEST_F(BlackScholesGreeksTest, PutGamma)
+//{
+//    constexpr double referenceGamma = 0.018762;
+//
+//    EXPECT_NEAR(putPricer.Gamma(), referenceGamma, 1e-6);
+//}
 
-    EXPECT_NEAR( Pricer.Vega(), ReferenceVega, 1e-3);
+TEST_F(BlackScholesGreeksTest, CallVega)
+{
+    constexpr double referenceVega = 37.5240;
+
+    EXPECT_NEAR(callPricer.Vega(), referenceVega, 1e-3);
 }
 
-TEST_F(BlackScholesGreeksTest, Theta)
-{
-    constexpr double ReferenceTheta = -6.4140;
+//TEST_F(BlackScholesGreeksTest, PutVega)
+//{
+//    constexpr double referenceVega = 37.5240;
+//
+//    EXPECT_NEAR(putPricer.Vega(), referenceVega, 1e-3);
+//}
 
-    EXPECT_NEAR(Pricer.Theta(), ReferenceTheta, 1e-3);
+TEST_F(BlackScholesGreeksTest, CallTheta)
+{
+    constexpr double referenceTheta = -6.4140;
+
+    EXPECT_NEAR(callPricer.Theta(), referenceTheta, 1e-3);
 }
 
-TEST_F(BlackScholesGreeksTest, Rho)
-{
-    constexpr double ReferenceRho = 53.2325;
+//TEST_F(BlackScholesGreeksTest, PutTheta)
+//{
+//    constexpr double referenceTheta = -1.6579;
+//
+//    EXPECT_NEAR(putPricer.Theta(), referenceTheta, 1e-3);
+//}
 
-    EXPECT_NEAR(Pricer.Rho(), ReferenceRho, 1e-3);
+TEST_F(BlackScholesGreeksTest, CallRho)
+{
+    constexpr double referenceRho = 53.2325;
+
+    EXPECT_NEAR(callPricer.Rho(), referenceRho, 1e-3);
 }
+
+//TEST_F(BlackScholesGreeksTest, PutRho)
+//{
+//    constexpr double referenceRho = -41.8905;
+//
+//    EXPECT_NEAR(putPricer.Rho(), referenceRho, 1e-3);
+//}
+
+TEST_F(BlackScholesGreeksTest, PutCallPriceParity)
+{
+    const double lhs = callPricer.Price() - putPricer.Price();
+
+    const double rhs = spot - strike * std::exp(-riskFreeRate * maturity);
+
+    EXPECT_NEAR(lhs, rhs, 1e-12); 
+}
+
+TEST_F(BlackScholesGreeksTest, PutCallDeltaParity)
+{
+    EXPECT_NEAR(callPricer.Delta() - putPricer.Delta(), 1.0, 1e-12);
+}
+
+TEST_F(BlackScholesGreeksTest, PutCallGammaParity)
+{
+    EXPECT_NEAR(callPricer.Gamma(), putPricer.Gamma(), 1e-12);
+}
+
+TEST_F(BlackScholesGreeksTest, PutCallVegaParity)
+{
+    EXPECT_NEAR(callPricer.Vega(), putPricer.Vega(), 1e-12);
+}
+
+TEST_F(BlackScholesGreeksTest, PutCallThetaParity)
+{
+    const double lhs = callPricer.Theta() - putPricer.Theta();
+
+    const double rhs = -riskFreeRate * strike * std::exp(-riskFreeRate * maturity); 
+
+    EXPECT_NEAR(lhs, rhs, 1e-12);
+}
+
+TEST_F(BlackScholesGreeksTest, PutCallRhoParity)
+{
+    const double lhs = callPricer.Rho() - putPricer.Rho();
+
+    const double rhs = strike * maturity * std::exp(-riskFreeRate * maturity);
+
+    EXPECT_NEAR(lhs, rhs, 1e-12);
+}
+
+
