@@ -5,8 +5,16 @@ build/
 # Visual Studio
 .vs/
 
-# CMake cache
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
 CMakeUserPresets.json
+compile_commands.json
+
+# Doxygen output
+docs/html/
+docs/latex/
 
 # Compiler outputs
 *.obj
@@ -15,6 +23,9 @@ CMakeUserPresets.json
 *.lib
 *.dll
 *.exe
+
+# Testing output
+Testing/
 
 # Misc
 *.user
