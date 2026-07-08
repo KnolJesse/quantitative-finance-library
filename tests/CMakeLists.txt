@@ -1,4 +1,4 @@
-add_executable(QuantFinanceTests
+add_executable(QuantFinanceTests 
     Statistics/RunningStatsTest.cpp
     Random/RandomGeneratorTest.cpp
     Models/GeometricBrownianMotionTest.cpp
