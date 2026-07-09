@@ -9,12 +9,8 @@ build/
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
-CMakeUserPresets.json
 compile_commands.json
-
-# Doxygen output
-docs/html/
-docs/latex/
+CMakeUserPresets.json
 
 # Compiler outputs
 *.obj
@@ -23,6 +19,10 @@ docs/latex/
 *.lib
 *.dll
 *.exe
+
+# Doxygen output
+docs/html/
+docs/latex/
 
 # Testing output
 Testing/

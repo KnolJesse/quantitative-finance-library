@@ -1,7 +1,7 @@
 #pragma once
 
 #include "qf/Payoffs/Payoff.hpp"
-#include "qf/MonteCarlo/Path.hpp"
+#include "qf/PathGeneration/Path.hpp"
 
 #include <cassert>
 

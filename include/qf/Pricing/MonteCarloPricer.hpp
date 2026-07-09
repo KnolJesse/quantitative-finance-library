@@ -1,6 +1,6 @@
 #pragma once
 
-#include "qf/MonteCarlo/PathGenerator.hpp"
+#include "qf/PathGeneration/PathGenerator.hpp"
 #include "qf/Payoffs/Payoff.hpp"
 #include "qf/Pricing/PricingResult.hpp"
 #include "qf/Random/RandomGenerator.hpp"
