@@ -37,8 +37,8 @@ TEST(MonteCarloGreeks, DeltaMatchesBlackScholes)
         spot,
         riskFreeRate,
         maturity,
-        maturity / static_cast<double>(numberOfSteps),
-        numberOfSteps,
+        1.0/252.0,
+        //numberOfSteps,
         simulations);
 
     const double monteCarloDelta = pricer.Delta(bump);
@@ -102,8 +102,8 @@ TEST(MonteCarloGreeks, DeltaIsStableAcrossReasonableBumps)
             spot,
             riskFreeRate,
             maturity,
-            maturity / static_cast<double>(numberOfSteps),
-            numberOfSteps,
+            1.0 / 252.0,
+            //numberOfSteps,
             simulations);
 
         const double delta = pricer.Delta(bump);

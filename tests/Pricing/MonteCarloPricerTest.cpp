@@ -38,7 +38,7 @@ TEST(MonteCarloPricer, ZeroVolatilityProducesDeterministicPrice)
         riskFreeRate,
         maturity,
         timeStep,
-        numberOfSteps,
+        //numberOfSteps,
         simulations);
 
     const qf::PricingResult price = pricer.Price();
@@ -82,7 +82,7 @@ TEST(MonteCarloPricer, SameSeedProducesSamePrice)
         riskFreeRate,
         maturity,
         timeStep,
-        numberOfSteps,
+        //numberOfSteps,
         simulations);
 
     qf::MonteCarloPricer pricer2(
@@ -93,7 +93,7 @@ TEST(MonteCarloPricer, SameSeedProducesSamePrice)
         riskFreeRate,
         maturity,
         timeStep,
-        numberOfSteps,
+        //numberOfSteps,
         simulations);
 
     const qf::PricingResult price1 = pricer1.Price();

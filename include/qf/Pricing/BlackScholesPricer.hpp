@@ -13,6 +13,11 @@ namespace qf
      * Prices European options and computes their analytical Greeks
      * under the Black-Scholes model.
      *
+     * Immutable after construction.  
+     * All parameters are supplied to the constructor,
+     * and pricing methods may be called repeatedly without modifying the 
+     * object state. 
+     * 
      * The model assumes:
      * - Geometric Brownian motion for the underlying asset.
      * - Constant volatility.
@@ -41,8 +46,13 @@ namespace qf
          * @param spot Current underlying asset price.
          * @param strike Option strike price.
          * @param riskFreeRate Continuously compounded risk-free rate.
-         * @param volatility Annualized volatility.
+         * @param volatility Annualized volatility expressed as a decimal.
          * @param maturity Time to expiration in years.
+         * 
+         * @pre spot > 0
+         * @pre strike > 0
+         * @pre volatility >= 0
+         * @pre maturity > 0
          */
         BlackScholesPricer(
             OptionType optionType,
@@ -66,8 +76,11 @@ namespace qf
 
     public:
         /**
-         * @brief Computes the option price.
+         * @brief Computes present value of the option.
          *
+         * Returns the analytical Black-Scholes price corresponding to the 
+         * contract and market parameters supplied at construction. 
+         * 
          * @return Present value of the option.
          */
         [[nodiscard]]
