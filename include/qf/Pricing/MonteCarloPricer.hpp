@@ -52,15 +52,14 @@ namespace qf
          * @param spot Initial underlying asset price.
          * @param riskFreeRate Continuously compounded annual risk-free interest rate.
          * @param maturity Time to expiry in years.
-         * @param timeStep Simulation time step in years.
-         * @param numberOfSteps Number of time steps in each simulated path.
+         * @param requestedTimeStep Targeted simulation time step in years.
          * @param simulations Number of Monte Carlo simulations to perform.
          *
          * @pre spot > 0
          * @pre riskFreeRate >= 0
          * @pre maturity > 0
-         * @pre timeStep > 0
-         * @pre numberOfSteps > 0
+         * @pre requestedTimeStep > 0
+         * @pre requestedTimeStep <= maturity
          * @pre simulations > 0
          */
         MonteCarloPricer(
