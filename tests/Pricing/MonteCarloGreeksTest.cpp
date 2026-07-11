@@ -4,6 +4,7 @@
 #include "qf/Payoffs/EuropeanCallPayoff.hpp"
 #include "qf/Pricing/BlackScholesPricer.hpp"
 #include "qf/Pricing/MonteCarloPricer.hpp"
+#include "qf/Simulation/MonteCarlosettings.hpp"
 #include "qf/Products/OptionType.hpp"
 #include "qf/Random/RandomGenerator.hpp"
 
@@ -21,8 +22,11 @@ TEST(MonteCarloGreeks, DeltaMatchesBlackScholes)
 
     constexpr double bump = 0.10;
 
-    constexpr std::size_t numberOfSteps = 252;
-    constexpr std::size_t simulations = 200000;
+    //constexpr std::size_t numberOfSteps = 252;
+    //constexpr std::size_t simulations = 200000;
+    qf::MonteCarloSettings settings; 
+    settings.NumberOfSimulations = 200'000;
+    settings.RequestedTimeStep = 0.005;
 
     qf::GeometricBrownianMotion model(riskFreeRate, volatility);
 
@@ -37,9 +41,7 @@ TEST(MonteCarloGreeks, DeltaMatchesBlackScholes)
         spot,
         riskFreeRate,
         maturity,
-        1.0/252.0,
-        //numberOfSteps,
-        simulations);
+        settings); 
 
     const double monteCarloDelta = pricer.Delta(bump);
 
@@ -67,8 +69,11 @@ TEST(MonteCarloGreeks, DeltaIsStableAcrossReasonableBumps)
     constexpr double volatility = 0.20;
     constexpr double maturity = 1.0;
 
-    constexpr std::size_t numberOfSteps = 252;
-    constexpr std::size_t simulations = 200000;
+    //constexpr std::size_t numberOfSteps = 252;
+    //constexpr std::size_t simulations = 200000;
+    qf::MonteCarloSettings settings;
+    settings.NumberOfSimulations = 200'000;
+    settings.RequestedTimeStep = 1.0 / 252.0;
 
     qf::GeometricBrownianMotion model(riskFreeRate, volatility);
 
@@ -102,9 +107,7 @@ TEST(MonteCarloGreeks, DeltaIsStableAcrossReasonableBumps)
             spot,
             riskFreeRate,
             maturity,
-            1.0 / 252.0,
-            //numberOfSteps,
-            simulations);
+            settings); 
 
         const double delta = pricer.Delta(bump);
 

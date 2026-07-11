@@ -1,6 +1,7 @@
 #pragma once
 
 #include "qf/PathGeneration/Path.hpp"
+#include "qf/PathGeneration/SimulationGrid.hpp"
 #include "qf/Random/RandomGenerator.hpp"
 
 #include <cstddef>
@@ -40,6 +41,12 @@ namespace qf
             }
 
             return Path(std::move(values));
+        }
+
+        [[nodiscard]]
+        Path Generate(double spot, SimulationGrid simulationGrid) 
+        {
+            return Generate(spot, simulationGrid.TimeStep(), simulationGrid.NumberOfSteps()); 
         }
 
     private:

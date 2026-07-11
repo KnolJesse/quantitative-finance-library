@@ -8,9 +8,9 @@ namespace qf
 {
 	double EuropeanPutPayoff::Evaluate(const Path& path) const
 	{
-		assert(path.Size() > 0 && "path must contain at least one value.");
+		assert(path.size() > 0 && "path must contain at least one value.");
 
-		const double terminalPrice = path.Back();
+		const double terminalPrice = path.back();
 
 		return std::max(m_strike - terminalPrice, 0.0);
 	}

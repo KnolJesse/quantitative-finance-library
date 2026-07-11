@@ -2,6 +2,7 @@
 
 #include "qf/Models/GeometricBrownianMotion.hpp"
 #include "qf/Pricing/MonteCarloPricer.hpp"
+#include "qf/Simulation/MonteCarloSettings.hpp"
 #include "qf/PathGeneration/PathGenerator.hpp"
 #include "qf/Payoffs/EuropeanCallPayoff.hpp"
 #include "qf/Random/RandomGenerator.hpp"
@@ -18,9 +19,9 @@ TEST(MonteCarloPricer, ZeroVolatilityProducesDeterministicPrice)
     constexpr double riskFreeRate = 0.05;
     constexpr double maturity = 1.0;
 
-    constexpr double timeStep = 1.0;
-    constexpr std::size_t numberOfSteps = 1;
-    constexpr std::size_t simulations = 1000;
+    qf::MonteCarloSettings settings;
+    settings.NumberOfSimulations = 1'000;
+    settings.RequestedTimeStep = 0.01;
 
     qf::RandomGenerator randomGenerator(42);
 
@@ -37,9 +38,7 @@ TEST(MonteCarloPricer, ZeroVolatilityProducesDeterministicPrice)
         spot,
         riskFreeRate,
         maturity,
-        timeStep,
-        //numberOfSteps,
-        simulations);
+        settings); 
 
     const qf::PricingResult price = pricer.Price();
 
@@ -61,15 +60,15 @@ TEST(MonteCarloPricer, SameSeedProducesSamePrice)
     constexpr double riskFreeRate = 0.05;
     constexpr double maturity = 1.0;
 
-    constexpr double timeStep = 0.01;
-    constexpr std::size_t numberOfSteps = 100;
-    constexpr std::size_t simulations = 10000;
+    qf::MonteCarloSettings settings; 
+    settings.NumberOfSimulations = 10'000;
+    settings.RequestedTimeStep = 0.01;
 
     qf::RandomGenerator randomGenerator1(42);
     qf::RandomGenerator randomGenerator2(42);
 
     qf::GeometricBrownianMotion model1(drift, volatility);
-    qf::GeometricBrownianMotion model2( drift, volatility);
+    qf::GeometricBrownianMotion model2(drift, volatility);
 
     qf::EuropeanCallPayoff payoff1(strike);
     qf::EuropeanCallPayoff payoff2(strike);
@@ -81,9 +80,7 @@ TEST(MonteCarloPricer, SameSeedProducesSamePrice)
         spot,
         riskFreeRate,
         maturity,
-        timeStep,
-        //numberOfSteps,
-        simulations);
+        settings); 
 
     qf::MonteCarloPricer pricer2(
         model2,
@@ -92,9 +89,7 @@ TEST(MonteCarloPricer, SameSeedProducesSamePrice)
         spot,
         riskFreeRate,
         maturity,
-        timeStep,
-        //numberOfSteps,
-        simulations);
+        settings);
 
     const qf::PricingResult price1 = pricer1.Price();
     const qf::PricingResult price2 = pricer2.Price();

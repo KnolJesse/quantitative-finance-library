@@ -1,14 +1,18 @@
 #pragma once
 
-#include "qf/PathGeneration/PathGenerator.hpp"
-#include "qf/Payoffs/Payoff.hpp"
-#include "qf/Pricing/PricingResult.hpp"
-#include "qf/Random/RandomGenerator.hpp"
-#include "qf/Statistics/RunningStats.hpp"
-
 #include <cstddef>
 #include <cmath>
 #include <cassert>
+
+#include "qf/PathGeneration/PathGenerator.hpp"
+#include "qf/PathGeneration/SimulationGrid.hpp"
+#include "qf/Payoffs/Payoff.hpp"
+#include "qf/Pricing/PricingResult.hpp"
+#include "qf/Simulation/MonteCarloEngine.hpp"
+#include "qf/Simulation/MonteCarloSettings.hpp"
+#include "qf/Simulation/SimulationResult.hpp"
+#include "qf/Statistics/RunningStats.hpp"
+#include "qf/Random/RandomGenerator.hpp"
 
 namespace qf
 {
@@ -69,14 +73,15 @@ namespace qf
             double spot,
             double riskFreeRate,
             double maturity,
-            double requestedTimeStep,
-            std::size_t simulations) noexcept
+            const MonteCarloSettings& settings) noexcept
             : m_model(model)
             , m_randomGenerator(randomGenerator)
             , m_payoff(payoff)
             , m_spot(spot)
             , m_riskFreeRate(riskFreeRate)
-            , m_simulations(simulations)
+            , m_maturity(maturity)
+            , m_settings(settings)
+            , m_simulationGrid(m_maturity, settings.RequestedTimeStep)
         {
             assert(spot > 0.0 &&
                 "spot must be greater than zero");
@@ -87,20 +92,11 @@ namespace qf
             assert(maturity > 0.0 &&
                 "maturity must be greater than zero");
 
-            assert(requestedTimeStep > 0.0 &&
+            assert(settings.RequestedTimeStep > 0.0 &&
                 "requestedTimeStep must be greater than zero");
 
-            assert(requestedTimeStep <= maturity &&
+            assert(settings.RequestedTimeStep <= maturity &&
                 "requestedTimeStep must be smaller than or equal to maturity");
-
-            assert(simulations > 0 &&
-                "simulations must be greater than zero");
-
-            m_numberOfSteps = CalculateNumberOfSteps(maturity, requestedTimeStep);
-
-            m_timeStep = maturity / static_cast<double>(m_numberOfSteps); 
-
-            m_maturity = m_timeStep * m_numberOfSteps; 
         }
 
     public:
@@ -126,7 +122,9 @@ namespace qf
                 randomGenerator,
                 m_spot,
                 m_riskFreeRate,
-                m_maturity
+                m_maturity,
+                m_simulationGrid,
+                m_settings
             );
         }
 
@@ -148,14 +146,16 @@ namespace qf
                 m_model,
                 m_spot + bump,
                 m_riskFreeRate,
-                m_maturity
+                m_maturity,
+                m_simulationGrid
             );
 
             const PricingResult down = PriceScenario(
                 m_model,
                 m_spot - bump,
                 m_riskFreeRate,
-                m_maturity
+                m_maturity,
+                m_simulationGrid
             ); 
 
             return
@@ -176,27 +176,30 @@ namespace qf
          * @return Estimated Gamma.
          */
         [[nodiscard]]
-        double Gamma(double bump)
+        double Gamma(double bump) const 
         {
             const PricingResult up = PriceScenario(
                 m_model,
                 m_spot + bump,
                 m_riskFreeRate,
-                m_maturity
+                m_maturity,
+                m_simulationGrid
             );
 
             const PricingResult middle = PriceScenario(
                 m_model,
                 m_spot,
                 m_riskFreeRate,
-                m_maturity
+                m_maturity,
+                m_simulationGrid
             );
 
             const PricingResult down = PriceScenario(
                 m_model,
                 m_spot - bump,
                 m_riskFreeRate,
-                m_maturity
+                m_maturity,
+                m_simulationGrid
             );
 
             return
@@ -226,14 +229,16 @@ namespace qf
                 upModel,
                 m_spot,
                 m_riskFreeRate,
-                m_maturity
+                m_maturity,
+                m_simulationGrid
             ); 
 
             const PricingResult down = PriceScenario(
                 downModel,
                 m_spot,
                 m_riskFreeRate,
-                m_maturity
+                m_maturity,
+                m_simulationGrid
             );
 
             return
@@ -265,14 +270,16 @@ namespace qf
                 upModel,
                 m_spot,
                 m_riskFreeRate + bump,
-                m_maturity
+                m_maturity,
+                m_simulationGrid
             ); 
 
             const PricingResult down = PriceScenario(
                 downModel,
                 m_spot,
                 m_riskFreeRate - bump,
-                m_maturity
+                m_maturity,
+                m_simulationGrid
             );
 
             return
@@ -296,18 +303,32 @@ namespace qf
         [[nodiscard]]
         double Theta(double bump) const
         {
+            // NOTE:
+            //
+            // Theta constructs separate simulation grids for the bumped maturities.
+            // The number of time steps may therefore differ between the two scenarios.
+            // This is acceptable for the current implementation but may be revisited
+            // when the Risk module is introduced.
+            double shorterMaturity = m_maturity - bump; 
+            double longerMaturity = m_maturity + bump; 
+
+            SimulationGrid shorterGrid(shorterMaturity, m_settings.RequestedTimeStep);
+            SimulationGrid longerGrid(longerMaturity, m_settings.RequestedTimeStep);
+
             const PricingResult shorter = PriceScenario(
                 m_model,
                 m_spot,
                 m_riskFreeRate,
-                m_maturity - bump
+                shorterMaturity,
+                shorterGrid
             ); 
 
             const PricingResult longer = PriceScenario(
                 m_model,
                 m_spot,
                 m_riskFreeRate,
-                m_maturity + bump
+                longerMaturity,
+                longerGrid
             );
 
             return
@@ -323,7 +344,8 @@ namespace qf
             const Model& model,
             double spot,
             double riskFreeRate,
-            double maturity) const
+            double maturity,
+            SimulationGrid simulationGrid) const
         {
             RandomGenerator randomGenerator = m_randomGenerator.Clone(); 
 
@@ -332,7 +354,9 @@ namespace qf
                 randomGenerator,
                 spot,
                 riskFreeRate,
-                maturity
+                maturity,
+                simulationGrid,
+                m_settings
             );
         }
 
@@ -342,44 +366,21 @@ namespace qf
             RandomGenerator& randomGenerator,
             double spot,
             double riskFreeRate,
-            double maturity) const
+            double maturity,
+            SimulationGrid simulationGrid,
+            MonteCarloSettings settings) const
         {
-            RunningStats statistics;
+            SimulationResult simulationResult = m_engine.Simulate(model, randomGenerator, m_payoff, spot, simulationGrid, settings);
 
-            PathGenerator<Model> pathGenerator(model, randomGenerator);
-
-
-
-            for (std::size_t s = 0; s < m_simulations; ++s)
-            {
-                const Path path = pathGenerator.Generate(spot, m_timeStep, m_numberOfSteps);
-
-                const double payoff = m_payoff.Evaluate(path);
-
-                statistics.Add(payoff);
-            }
-
-            // Later: replace maturity -> m_timeStep * m_numberOfSteps 
             const double discountFactor = std::exp(-riskFreeRate * maturity);
 
             PricingResult result;
 
-            result.Value = discountFactor * statistics.Mean(); 
+            result.Value = discountFactor * simulationResult.Mean; 
 
-            result.StandardError = 
-                discountFactor 
-                * 
-                std::sqrt(statistics.Variance() / static_cast<double>(m_simulations));
-                
+            result.StandardError = discountFactor * simulationResult.StandardError; 
 
             return result;
-        }
-
-    private:
-        [[nodiscard]]
-        static std::size_t CalculateNumberOfSteps(double maturity, double timeStep) noexcept
-        {
-            return static_cast<std::size_t>(std::ceil(maturity / timeStep));
         }
 
     private:
@@ -393,7 +394,8 @@ namespace qf
         double m_maturity = 0.0;
         double m_timeStep = 0.0;
 
-        std::size_t m_numberOfSteps = 0;
-        std::size_t m_simulations = 0;
+        const MonteCarloSettings& m_settings;
+        SimulationGrid m_simulationGrid; 
+        MonteCarloEngine<Model> m_engine;
     };
 }

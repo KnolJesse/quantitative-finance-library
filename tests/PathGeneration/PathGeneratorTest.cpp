@@ -20,6 +20,6 @@ TEST(PathGenerator, GeneratesCorrectNumberOfPoints)
 
     const qf::Path path = generator.Generate(spot, timeStep, numberOfSteps);
 
-    EXPECT_EQ(path.Size(), numberOfSteps + 1);
-    EXPECT_DOUBLE_EQ(path.At(0), spot);
+    EXPECT_EQ(path.size(), numberOfSteps + 1);
+    EXPECT_DOUBLE_EQ(path.at(0), spot);
 }

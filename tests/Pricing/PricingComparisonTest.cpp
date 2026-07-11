@@ -1,13 +1,13 @@
 #include <gtest/gtest.h>
 
 #include "qf/Models/GeometricBrownianMotion.hpp"
-#include "qf/PathGeneration/PathGenerator.hpp"
 #include "qf/Payoffs/EuropeanCallPayoff.hpp"
 #include "qf/Pricing/BlackScholesPricer.hpp"
 #include "qf/Pricing/MonteCarloPricer.hpp"
 #include "qf/Pricing/PricingResult.hpp"
 #include "qf/Products/OptionType.hpp"
 #include "qf/Random/RandomGenerator.hpp"
+#include "qf/Simulation/MonteCarloSettings.hpp"
 
 TEST(PricingComparison, MonteCarloMatchesBlackScholes)
 {
@@ -17,19 +17,19 @@ TEST(PricingComparison, MonteCarloMatchesBlackScholes)
     constexpr double volatility = 0.20;
     constexpr double maturity = 1.0;
 
-    constexpr double timeStep = 0.01;
-    constexpr std::size_t numberOfSteps = 100;
-    constexpr std::size_t simulations = 1'000'000;
-
     qf::BlackScholesPricer analyticPricer(
-        qf::OptionType::Call, 
+        qf::OptionType::Call,
         spot,
         strike,
         riskFreeRate,
         volatility,
         maturity);
-
+    
     const double analyticalPrice = analyticPricer.Price();
+
+    qf::MonteCarloSettings settings;
+    settings.NumberOfSimulations = 1'000'000; 
+    settings.RequestedTimeStep = 0.01;  
 
     qf::RandomGenerator randomGenerator(42);
 
@@ -44,9 +44,10 @@ TEST(PricingComparison, MonteCarloMatchesBlackScholes)
         spot,
         riskFreeRate,
         maturity,
-        timeStep,
+        settings); 
+        //timeStep,
         //numberOfSteps,
-        simulations);
+        //simulations);
 
     const qf::PricingResult monteCarloResult = monteCarloPricer.Price();
 
