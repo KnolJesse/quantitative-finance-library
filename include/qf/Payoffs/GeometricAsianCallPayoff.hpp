@@ -7,10 +7,10 @@
 
 namespace qf
 {
-    class ArithmeticAsianPutPayoff final : public Payoff
+    class GeometricAsianCallPayoff final : public Payoff
     {
     public:
-        explicit ArithmeticAsianPutPayoff(double strike) noexcept
+        explicit GeometricAsianCallPayoff(double strike) noexcept
             : m_strike(strike)
         {
             assert(strike > 0.0 && "strike must be greater than zero");

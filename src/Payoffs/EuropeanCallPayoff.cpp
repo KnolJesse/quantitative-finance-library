@@ -1,7 +1,5 @@
 #include "qf/Payoffs/EuropeanCallPayoff.hpp"
-#include "qf/Payoffs/Payoff.hpp"
 
-#include <algorithm>
 #include <cassert>
 
 namespace qf

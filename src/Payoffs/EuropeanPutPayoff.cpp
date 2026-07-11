@@ -1,7 +1,5 @@
 #include "qf/Payoffs/EuropeanPutPayoff.hpp"
-#include "qf/Payoffs/Payoff.hpp"
 
-#include <algorithm>
 #include <cassert>
 
 namespace qf

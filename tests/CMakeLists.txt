@@ -11,7 +11,12 @@ add_executable(QuantFinanceTests
     Pricing/BlackScholesGreeksTest.cpp
     Payoffs/EuropeanPutPayoffTest.cpp
     Pricing/MonteCarloGreeksTest.cpp
-)
+    Payoffs/ArithmeticAsianCallPayoffTest.cpp
+    Payoffs/ArithmeticAsianPutPayoffTest.cpp
+    Payoffs/DigitalCallPayoffTest.cpp
+    Payoffs/DigitalPutPayoffTest.cpp
+    Payoffs/GeometricAsianPutPayoffTest.cpp
+    Payoffs/GeometricAsianCallPayoffTest.cpp)
 
 target_link_libraries(QuantFinanceTests
     PRIVATE

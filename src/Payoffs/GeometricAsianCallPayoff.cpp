@@ -1,0 +1,23 @@
+#include "qf/Payoffs/GeometricAsianCallPayoff.hpp"
+
+#include <cmath>
+#include <cassert>
+
+namespace qf
+{
+	double GeometricAsianCallPayoff::Evaluate(const Path& path) const
+	{
+		assert(!path.empty() && "path must contain at least one value.");
+
+		double sumLogPrices = 0.0;
+
+		for (double price : path)
+		{
+			sumLogPrices += std::log(price);
+		}
+
+		const double geometricAverage = std::exp(sumLogPrices / static_cast<double>(path.size())); 
+
+		return std::max(geometricAverage - m_strike, 0.0);
+	}
+}
