@@ -2,6 +2,7 @@
 
 #include "qf/Payoffs/Payoff.hpp"
 #include "qf/PathGeneration/Path.hpp"
+#include "qf/Time/ObservationSchedule.hpp"
 
 #include <cassert>
 
@@ -10,10 +11,14 @@ namespace qf
     class ArithmeticAsianPutPayoff final : public Payoff
     {
     public:
-        explicit ArithmeticAsianPutPayoff(double strike) noexcept
+        explicit ArithmeticAsianPutPayoff(
+            double strike,
+            ObservationSchedule observationSchedule) noexcept
             : m_strike(strike)
+            , m_observationSchedule(std::move(observationSchedule))
         {
-            assert(strike > 0.0 && "strike must be greater than zero");
+            assert(m_strike > 0.0 && "strike must be greater than zero");
+            assert(!m_observationSchedule.empty() && "schedule must not be empty");
         }
 
     public:
@@ -27,7 +32,14 @@ namespace qf
             return m_strike;
         }
 
+        [[nodiscard]]
+        ObservationSchedule Schedule() const
+        {
+            return m_observationSchedule;
+        }
+
     private:
         double m_strike = 0.0;
+        ObservationSchedule m_observationSchedule; 
     };
 }

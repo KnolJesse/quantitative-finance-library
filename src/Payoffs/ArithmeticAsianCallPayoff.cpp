@@ -10,12 +10,12 @@ namespace qf
 
 		double sum = 0.0;
 
-		for (double price : path)
+		for (double observationTime : m_observationSchedule)
 		{
-			sum += price;
+			sum += path.valueAt(observationTime);
 		}
 
-		const double averagePrice = sum / static_cast<double>(path.size());
+		const double averagePrice = sum / static_cast<double>(m_observationSchedule.size());
 
 		return std::max(averagePrice - m_strike, 0.0);
 	}

@@ -40,6 +40,19 @@ namespace qf
             }
         }
 
+        ObservationSchedule(std::initializer_list<double> observationTimes) 
+            : m_observationTimes(observationTimes) 
+        { 
+            assert(!m_observationTimes.empty() && "observation schedule must contain at least one observation");
+
+            assert(m_observationTimes.front() >= 0.0 && "observation times must be non-negative");
+
+            for (std::size_t i = 1; i < m_observationTimes.size(); ++i)
+            {
+                assert(m_observationTimes[i] > m_observationTimes[i - 1] && "observation times must be strictly increasing");
+            }
+        }
+
     public:
         [[nodiscard]]
         std::size_t size() const noexcept
@@ -60,7 +73,7 @@ namespace qf
         }
 
         [[nodiscard]]
-        const std::vector<double>& values() const noexcept
+        const std::vector<double>& times() const noexcept
         {
             return m_observationTimes;
         }

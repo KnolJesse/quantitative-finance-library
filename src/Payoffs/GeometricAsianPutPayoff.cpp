@@ -11,12 +11,12 @@ namespace qf
 
 		double sumLogPrices = 0.0;
 
-		for (double price : path)
+		for (double observationTime : m_observationSchedule)
 		{
-			sumLogPrices += std::log(price);
+			sumLogPrices += std::log(path.valueAt(observationTime));
 		}
 
-		const double geometricAverage = std::exp(sumLogPrices / static_cast<double>(path.size()));
+		const double geometricAverage = std::exp(sumLogPrices / static_cast<double>(m_observationSchedule.size()));
 
 		return std::max(m_strike - geometricAverage, 0.0);
 	}

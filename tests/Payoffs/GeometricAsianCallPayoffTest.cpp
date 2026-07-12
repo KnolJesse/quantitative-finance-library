@@ -1,40 +1,67 @@
 #include <gtest/gtest.h>
 
+#include <cmath>
+
 #include "qf/PathGeneration/Path.hpp"
 #include "qf/Payoffs/GeometricAsianCallPayoff.hpp"
+#include "qf/Time/ObservationSchedule.hpp"
 
 TEST(GeometricAsianCallPayoff, OutOfTheMoney)
 {
-    qf::GeometricAsianCallPayoff payoff(105.0);
+    std::vector<double> times = { 0.00, 0.25, 0.50, 0.75 };
+    std::vector<double> values = { 1.0, 2.0, 4.0, 8.0 };
 
-    qf::Path path({ 0.0, 1.0, 2.0 }, {100.0, 100.0, 100.0});
+    qf::ObservationSchedule schedule(times);
+
+    qf::GeometricAsianCallPayoff payoff(3.0, schedule);
+
+    qf::Path path(times, values);
 
     EXPECT_DOUBLE_EQ(payoff.Evaluate(path), 0.0);
 }
 
 TEST(GeometricAsianCallPayoff, AtTheMoney)
 {
-    qf::GeometricAsianCallPayoff payoff(100.0);
+    std::vector<double> times = { 0.00, 0.25, 0.50, 0.75 };
+    std::vector<double> values = { 1.0, 2.0, 4.0, 8.0 };
 
-    qf::Path path({ 0.0, 1.0, 2.0 }, {100.0, 100.0, 100.0});
+    double geometricMean = 2.0 * std::sqrt(2); 
+
+    qf::ObservationSchedule schedule(times);
+
+    qf::GeometricAsianCallPayoff payoff(geometricMean, schedule);
+
+    qf::Path path(times, values);
 
     EXPECT_NEAR(payoff.Evaluate(path), 0.0, 1e-12);
 }
 
 TEST(GeometricAsianCallPayoff, InTheMoney)
 {
-    qf::GeometricAsianCallPayoff payoff(95.0);
+    std::vector<double> times = { 0.00, 0.25, 0.50, 0.75 };
+    std::vector<double> values = { 1.0, 2.0, 4.0, 8.0 };
 
-    qf::Path path({ 0.0, 1.0, 2.0 }, {100.0, 100.0, 100.0});
+    double geometricMean = 2.0 * std::sqrt(2);
 
-    EXPECT_NEAR(payoff.Evaluate(path), 5.0, 1e-12);
+    qf::ObservationSchedule schedule(times);
+
+    qf::GeometricAsianCallPayoff payoff(2.0, schedule);
+
+    qf::Path path(times, values);
+
+    EXPECT_NEAR(payoff.Evaluate(path), geometricMean - 2.0, 1e-12);
 }
 
 TEST(GeometricAsianCallPayoff, UsesGeometricNotArithmeticAverage)
 {
-    qf::GeometricAsianCallPayoff payoff(110.0);
+    std::vector<double> times = { 0.00, 0.25, 0.50, 0.75 };
+    std::vector<double> values = { 1.0, 2.0, 4.0, 8.0 };
+    
+    qf::ObservationSchedule schedule(times);
 
-    qf::Path path({ 0.0, 1.0, 2.0 }, {50.0, 100.0, 200.0});
+    qf::Path path(times, values);
+    
+    qf::GeometricAsianCallPayoff payoff(3.0, schedule);
 
     EXPECT_DOUBLE_EQ(payoff.Evaluate(path), 0.0);
 }
