@@ -333,8 +333,7 @@ namespace qf
         [[nodiscard]]
         BlackScholesTerms ComputeTerms() const noexcept
         {
-            const double sqrtT = std::sqrt(m_maturity);
-            const double sigmaSqrtT = m_volatility * sqrtT; 
+            const double sigmaSqrtT = m_volatility * std::sqrt(m_maturity);;
 
             BlackScholesTerms terms; 
 

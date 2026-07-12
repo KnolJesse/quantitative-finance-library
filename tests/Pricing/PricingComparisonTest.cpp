@@ -45,9 +45,6 @@ TEST(PricingComparison, MonteCarloMatchesBlackScholes)
         riskFreeRate,
         maturity,
         settings); 
-        //timeStep,
-        //numberOfSteps,
-        //simulations);
 
     const qf::PricingResult monteCarloResult = monteCarloPricer.Price();
 

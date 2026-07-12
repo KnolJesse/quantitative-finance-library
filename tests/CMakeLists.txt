@@ -16,7 +16,8 @@ add_executable(QuantFinanceTests
     Payoffs/DigitalCallPayoffTest.cpp
     Payoffs/DigitalPutPayoffTest.cpp
     Payoffs/GeometricAsianPutPayoffTest.cpp
-    Payoffs/GeometricAsianCallPayoffTest.cpp)
+    Payoffs/GeometricAsianCallPayoffTest.cpp 
+    Pricing/BlackScholesGeometricAsianPricerTest.cpp)
 
 target_link_libraries(QuantFinanceTests
     PRIVATE

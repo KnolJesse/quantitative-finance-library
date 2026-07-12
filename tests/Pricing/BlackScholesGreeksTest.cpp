@@ -42,27 +42,12 @@ TEST_F(BlackScholesGreeksTest, CallDelta)
     EXPECT_NEAR(callPricer.Delta(), referenceDelta, 1e-4);
 }
 
-//TEST_F(BlackScholesGreeksTest, PutDelta)
-//{
-//    constexpr double referenceDelta = -0.3632;
-//
-//    EXPECT_NEAR(putPricer.Delta(), referenceDelta, 1e-4);
-//}
-
-
 TEST_F(BlackScholesGreeksTest, CallGamma)
 {
     constexpr double referenceGamma = 0.018762;
 
     EXPECT_NEAR(callPricer.Gamma(), referenceGamma, 1e-6);
 }
-
-//TEST_F(BlackScholesGreeksTest, PutGamma)
-//{
-//    constexpr double referenceGamma = 0.018762;
-//
-//    EXPECT_NEAR(putPricer.Gamma(), referenceGamma, 1e-6);
-//}
 
 TEST_F(BlackScholesGreeksTest, CallVega)
 {
@@ -71,13 +56,6 @@ TEST_F(BlackScholesGreeksTest, CallVega)
     EXPECT_NEAR(callPricer.Vega(), referenceVega, 1e-3);
 }
 
-//TEST_F(BlackScholesGreeksTest, PutVega)
-//{
-//    constexpr double referenceVega = 37.5240;
-//
-//    EXPECT_NEAR(putPricer.Vega(), referenceVega, 1e-3);
-//}
-
 TEST_F(BlackScholesGreeksTest, CallTheta)
 {
     constexpr double referenceTheta = -6.4140;
@@ -85,26 +63,12 @@ TEST_F(BlackScholesGreeksTest, CallTheta)
     EXPECT_NEAR(callPricer.Theta(), referenceTheta, 1e-3);
 }
 
-//TEST_F(BlackScholesGreeksTest, PutTheta)
-//{
-//    constexpr double referenceTheta = -1.6579;
-//
-//    EXPECT_NEAR(putPricer.Theta(), referenceTheta, 1e-3);
-//}
-
 TEST_F(BlackScholesGreeksTest, CallRho)
 {
     constexpr double referenceRho = 53.2325;
 
     EXPECT_NEAR(callPricer.Rho(), referenceRho, 1e-3);
 }
-
-//TEST_F(BlackScholesGreeksTest, PutRho)
-//{
-//    constexpr double referenceRho = -41.8905;
-//
-//    EXPECT_NEAR(putPricer.Rho(), referenceRho, 1e-3);
-//}
 
 TEST_F(BlackScholesGreeksTest, PutCallPriceParity)
 {
