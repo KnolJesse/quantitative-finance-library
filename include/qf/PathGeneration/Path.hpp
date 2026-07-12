@@ -41,6 +41,12 @@ namespace qf
         }
 
         [[nodiscard]]
+        const std::vector<double>& values() const noexcept
+        {
+            return m_values;
+        }
+
+        [[nodiscard]]
         value_type front() const
         {
             return m_values.front();
