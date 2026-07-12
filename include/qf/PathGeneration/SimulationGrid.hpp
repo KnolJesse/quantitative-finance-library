@@ -1,5 +1,6 @@
 #pragma once 
 
+#include <cassert>
 #include <cstddef>
 
 namespace qf
@@ -36,6 +37,12 @@ namespace qf
 		std::size_t NumberOfSteps() const noexcept
 		{
 			return m_numberOfSteps;
+		}
+
+		[[nodiscard]]
+		double TimeAt(std::size_t index) const noexcept
+		{
+			return static_cast<double>(index * m_timeStep); 
 		}
 
 	private:

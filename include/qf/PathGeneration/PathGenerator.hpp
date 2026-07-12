@@ -29,18 +29,27 @@ namespace qf
             std::vector<double> values;
             values.reserve(numberOfSteps + 1);
 
-            double currentValue = spot;
+            std::vector<double> times; 
+            times.reserve(numberOfSteps + 1); 
 
+            double currentValue = spot;
             values.push_back(currentValue);
+
+            double currentTime = 0.0; 
+            times.push_back(currentTime); 
 
             for (std::size_t step = 0; step < numberOfSteps; ++step)
             {
                 currentValue = m_model.Evolve(currentValue, timeStep, m_randomGenerator);
 
+                currentTime += timeStep; 
+
                 values.push_back(currentValue);
+                times.push_back(currentTime);
             }
 
-            return Path(std::move(values));
+            //return Path(std::move(values), std::move(times));
+            return Path(times, values); 
         }
 
         [[nodiscard]]
