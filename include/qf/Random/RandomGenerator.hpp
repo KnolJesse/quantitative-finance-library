@@ -35,13 +35,14 @@ namespace qf
         }
 
         [[nodiscard]]
-        RandomGenerator Clone() const noexcept
+        RandomGenerator Clone() const 
         {
             RandomGenerator clone;
 
             clone.m_engine = m_engine; 
 
-            return clone;
+            //return clone;
+            return *this; 
         }
 
     private:

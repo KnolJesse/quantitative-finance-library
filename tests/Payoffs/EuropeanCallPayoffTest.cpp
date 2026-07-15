@@ -5,27 +5,27 @@
 
 TEST(EuropeanCallPayoff, OutOfTheMoney)
 {
-    qf::EuropeanCallPayoff payoff(100.0);
+    qf::EuropeanCallPayoff payoff(100.0, 1.0);
 
-    qf::Path path({ 0.0 }, { 90.0 });
+    qf::Path path({ 1.0 }, { 90.0 });
 
     EXPECT_DOUBLE_EQ(payoff.Evaluate(path), 0.0);
 }
 
 TEST(EuropeanCallPayoff, AtTheMoney)
 {
-    qf::EuropeanCallPayoff payoff(100.0);
+    qf::EuropeanCallPayoff payoff(100.0, 1.0);
 
-    qf::Path path({0.0}, { 100.0 });
+    qf::Path path({1.0}, { 100.0 });
 
     EXPECT_DOUBLE_EQ(payoff.Evaluate(path), 0.0);
 }
 
 TEST(EuropeanCallPayoff, InTheMoney)
 {
-    qf::EuropeanCallPayoff payoff(100.0);
+    qf::EuropeanCallPayoff payoff(100.0, 1.0);
 
-    qf::Path path({0.0}, { 125.0 });
+    qf::Path path({1.0}, { 125.0 });
 
     EXPECT_DOUBLE_EQ(payoff.Evaluate(path), 25.0);
 }

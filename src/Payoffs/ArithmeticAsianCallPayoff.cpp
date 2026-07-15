@@ -19,4 +19,22 @@ namespace qf
 
 		return std::max(averagePrice - m_strike, 0.0);
 	}
+
+	[[nodiscard]]
+	double ArithmeticAsianCallPayoff::TimeToMaturity() const
+	{
+		return m_maturity; 
+	}
+
+	[[nodiscard]]
+	std::unique_ptr<Payoff> ArithmeticAsianCallPayoff::AdvanceTime(double dt) const
+	{
+		ObservationSchedule advancedSchedule = m_observationSchedule.AdvanceBy(dt); 
+
+		return std::make_unique<ArithmeticAsianCallPayoff>(
+			m_strike,
+			m_maturity - dt,
+			advancedSchedule
+		); 
+	}
 }

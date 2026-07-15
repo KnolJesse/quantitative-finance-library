@@ -5,7 +5,7 @@
 
 TEST(DigitalPutPayoff, PaysOutWhenInTheMoney)
 {
-    qf::DigitalPutPayoff payoff(100.0);
+    qf::DigitalPutPayoff payoff(100.0, 2.0);
 
     qf::Path path({ 0.0, 1.0, 2.0 }, {90.0, 100.0, 90.0});
 
@@ -14,7 +14,7 @@ TEST(DigitalPutPayoff, PaysOutWhenInTheMoney)
 
 TEST(DigitalPutPayoff, DoesNotPayOutAtStrike)
 {
-    qf::DigitalPutPayoff payoff(100.0);
+    qf::DigitalPutPayoff payoff(100.0, 2.0);
 
     qf::Path path({ 0.0, 1.0, 2.0 }, {90.0, 100.0, 100.0});
 
@@ -23,7 +23,7 @@ TEST(DigitalPutPayoff, DoesNotPayOutAtStrike)
 
 TEST(DigitalPutPayoff, SupportsCustomPayout)
 {
-    qf::DigitalPutPayoff payoff(100.0, 50.0);
+    qf::DigitalPutPayoff payoff(100.0, 1.0, 50.0);
 
     qf::Path path({ 0.0, 1.0}, {100.0, 90.0});
 

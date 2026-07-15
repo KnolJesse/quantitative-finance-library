@@ -2,7 +2,9 @@
 
 #include <cassert>
 #include <cstddef>
+#include <span>
 #include <vector>
+#include <numeric>
 
 namespace qf
 {
@@ -55,13 +57,13 @@ namespace qf
 
     public:
         [[nodiscard]]
-        std::size_t size() const noexcept
+        std::size_t size() const
         {
             return m_observationTimes.size();
         }
 
         [[nodiscard]]
-        bool empty() const noexcept
+        bool empty() const
         {
             return m_observationTimes.empty();
         }
@@ -70,12 +72,6 @@ namespace qf
         double at(std::size_t index) const
         {
             return m_observationTimes.at(index);
-        }
-
-        [[nodiscard]]
-        const std::vector<double>& times() const noexcept
-        {
-            return m_observationTimes;
         }
 
         [[nodiscard]]
@@ -91,16 +87,72 @@ namespace qf
         }
 
         [[nodiscard]]
-        auto begin() const noexcept
+        auto begin() const
         {
             return m_observationTimes.begin();
         }
 
         [[nodiscard]]
-        auto end() const noexcept
+        auto end() const
         {
             return m_observationTimes.end();
         }
+
+    public: 
+        [[nodiscard]]
+        std::span<const double> ObservationTimes() const
+        {
+            return m_observationTimes;
+        }
+
+        [[nodiscard]]
+        double AverageObservationTime() const
+        {
+            double timesSum = std::accumulate(m_observationTimes.begin(), m_observationTimes.end(), 0.0);
+            double numberOfObservations = static_cast<double>(m_observationTimes.size()); 
+            
+            return timesSum / numberOfObservations; 
+        }
+
+        [[nodiscard]]
+        ObservationSchedule FormUniformSchedule(double endTime, std::size_t numberOfObservations)
+        {
+            assert(endTime > 0.0 && "endTime must be greater than zero");
+
+            assert(numberOfObservations > 0 && "numberOfObservations must be greater than zero");
+
+            m_observationTimes.reserve(numberOfObservations);
+
+            const double timeStep = endTime / static_cast<double>(numberOfObservations);
+
+            for (std::size_t i = 1; i <= numberOfObservations; ++i)
+            {
+                m_observationTimes.push_back(static_cast<double>(i) * timeStep);
+            }
+        }
+
+        [[nodiscard]]
+        ObservationSchedule AdvanceBy(double dt) const
+        {
+            assert(dt >= 0.0 && "dt must be non-negative");
+
+            std::vector<double> newSchedule;
+
+            newSchedule.reserve(m_observationTimes.size()); 
+
+            for (double time : m_observationTimes)
+            {
+                double newTime = time - dt;
+
+                if (newTime >= 0.0) 
+                {
+                    newSchedule.push_back(newTime);
+                }
+            }
+
+            return ObservationSchedule(newSchedule); 
+        }
+
 
     private:
         std::vector<double> m_observationTimes;

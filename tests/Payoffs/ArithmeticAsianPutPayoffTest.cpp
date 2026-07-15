@@ -37,7 +37,7 @@ TEST(ArithmeticAsianPutPayoff, OutOfTheMoney)
 
     qf::ObservationSchedule schedule(times);
 
-    qf::ArithmeticAsianPutPayoff payoff(95.0, schedule);
+    qf::ArithmeticAsianPutPayoff payoff(95.0, 2.0, schedule);
 
     qf::Path path(times, values);
 
@@ -51,7 +51,7 @@ TEST(ArithmeticAsianPutPayoff, AtTheMoney)
 
     qf::ObservationSchedule schedule(times);
 
-    qf::ArithmeticAsianPutPayoff payoff(100.0, schedule);
+    qf::ArithmeticAsianPutPayoff payoff(100.0, 2.0, schedule);
 
     qf::Path path(times, values);
 
@@ -65,7 +65,7 @@ TEST(ArithmeticAsianPutPayoff, InTheMoney)
 
     qf::ObservationSchedule schedule(times);
 
-    qf::ArithmeticAsianPutPayoff payoff(105.0, schedule);
+    qf::ArithmeticAsianPutPayoff payoff(105.0, 2.0, schedule);
 
     qf::Path path(times, values);
 
@@ -79,7 +79,7 @@ TEST(ArithmeticAsianPutPayoff, AveragesOverObservationSchedule1)
 
     qf::ObservationSchedule schedule({ 0.25, 0.75 });
 
-    qf::ArithmeticAsianPutPayoff payoff(95.0, schedule);
+    qf::ArithmeticAsianPutPayoff payoff(95.0, 1.00, schedule);
 
     qf::Path path(times, values);
 
@@ -93,7 +93,7 @@ TEST(ArithmeticAsianPutPayoff, AveragesOverObservationSchedule2)
 
     qf::ObservationSchedule schedule({ 0.00, 0.50, 1.00 });
 
-    qf::ArithmeticAsianPutPayoff payoff(95.0, schedule);
+    qf::ArithmeticAsianPutPayoff payoff(95.0, 1.00, schedule);
 
     qf::Path path(times, values);
 

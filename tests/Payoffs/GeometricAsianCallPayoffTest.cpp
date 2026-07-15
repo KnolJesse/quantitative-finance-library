@@ -13,7 +13,7 @@ TEST(GeometricAsianCallPayoff, OutOfTheMoney)
 
     qf::ObservationSchedule schedule(times);
 
-    qf::GeometricAsianCallPayoff payoff(3.0, schedule);
+    qf::GeometricAsianCallPayoff payoff(3.0, 0.75, schedule);
 
     qf::Path path(times, values);
 
@@ -29,7 +29,7 @@ TEST(GeometricAsianCallPayoff, AtTheMoney)
 
     qf::ObservationSchedule schedule(times);
 
-    qf::GeometricAsianCallPayoff payoff(geometricMean, schedule);
+    qf::GeometricAsianCallPayoff payoff(geometricMean, 0.75, schedule);
 
     qf::Path path(times, values);
 
@@ -45,7 +45,7 @@ TEST(GeometricAsianCallPayoff, InTheMoney)
 
     qf::ObservationSchedule schedule(times);
 
-    qf::GeometricAsianCallPayoff payoff(2.0, schedule);
+    qf::GeometricAsianCallPayoff payoff(2.0, 0.75, schedule);
 
     qf::Path path(times, values);
 
@@ -61,7 +61,7 @@ TEST(GeometricAsianCallPayoff, UsesGeometricNotArithmeticAverage)
 
     qf::Path path(times, values);
     
-    qf::GeometricAsianCallPayoff payoff(3.0, schedule);
+    qf::GeometricAsianCallPayoff payoff(3.0, 0.75, schedule);
 
     EXPECT_DOUBLE_EQ(payoff.Evaluate(path), 0.0);
 }

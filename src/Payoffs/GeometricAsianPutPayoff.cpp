@@ -20,4 +20,22 @@ namespace qf
 
 		return std::max(m_strike - geometricAverage, 0.0);
 	}
+
+	[[nodiscard]]
+	double GeometricAsianPutPayoff::TimeToMaturity() const
+	{
+		return m_maturity;
+	}
+
+	[[nodiscard]]
+	std::unique_ptr<Payoff> GeometricAsianPutPayoff::AdvanceTime(double dt) const
+	{
+		ObservationSchedule advancedSchedule = m_observationSchedule.AdvanceBy(dt);
+
+		return std::make_unique<GeometricAsianPutPayoff>(
+			m_strike,
+			m_maturity - dt,
+			advancedSchedule
+		);
+	}
 }

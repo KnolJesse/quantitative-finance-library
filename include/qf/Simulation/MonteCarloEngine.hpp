@@ -2,13 +2,13 @@
 
 #include <cmath>
 #include <cstddef>
+#include <iostream>
 
 #include "qf/PathGeneration/PathGenerator.hpp"
 #include "qf/PathGeneration/SimulationGrid.hpp"
 #include "qf/Payoffs/Payoff.hpp"
 #include "qf/Random/RandomGenerator.hpp"
 #include "qf/Simulation/SimulationResult.hpp"
-#include "qf/Simulation/MonteCarloSettings.hpp"
 #include "qf/Statistics/RunningStats.hpp"
 
 namespace qf
@@ -19,18 +19,18 @@ namespace qf
 	public:
 		[[nodiscard]]
 		SimulationResult Simulate(
-			const Model& model,
-			RandomGenerator& randomGenerator,
 			const Payoff& payoff,
 			double spot,
+			const Model& model,
+			RandomGenerator& randomGenerator,
 			const SimulationGrid& simulationGrid,
-			const MonteCarloSettings& settings) const
+			const std::size_t numberOfSimulations) const
 		{
 			RunningStats statistics;
 
 			PathGenerator<Model> pathGenerator(model, randomGenerator);
 
-			for (std::size_t s = 0; s < settings.NumberOfSimulations; ++s)
+			for (std::size_t s = 0; s < numberOfSimulations; ++s)
 			{
 				const Path path = pathGenerator.Generate(spot, simulationGrid);
 
@@ -42,7 +42,7 @@ namespace qf
 			SimulationResult result;
 
 			result.Mean = statistics.Mean();
-			result.StandardError = std::sqrt(statistics.Variance() / static_cast<double>(settings.NumberOfSimulations));
+			result.StandardError = std::sqrt(statistics.Variance() / static_cast<double>(numberOfSimulations));
 
 			return result;
 		}

@@ -13,17 +13,26 @@ namespace qf
     public:
         explicit GeometricAsianPutPayoff(
             double strike,
+            double maturity,
             ObservationSchedule observationSchedule) noexcept
             : m_strike(strike)
+            , m_maturity(maturity)
             , m_observationSchedule(std::move(observationSchedule))
         {
             assert(m_strike > 0.0 && "strike must be greater than zero");
+            assert(m_maturity > 0.0 && "maturity must be greater than zero");
             assert(!m_observationSchedule.empty() && "schedule must not be empty");
         }
 
     public:
         [[nodiscard]]
         double Evaluate(const Path& path) const override;
+
+        [[nodiscard]]
+        double TimeToMaturity() const override;
+
+        [[nodiscard]]
+        std::unique_ptr<Payoff> AdvanceTime(double dt) const override;
 
     public:
         [[nodiscard]]
@@ -40,6 +49,7 @@ namespace qf
 
     private:
         double m_strike = 0.0;
+        double m_maturity = 0.0;
         ObservationSchedule m_observationSchedule;
     };
 }

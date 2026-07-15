@@ -11,7 +11,7 @@ TEST(GeometricAsianPutPayoff, OutOfTheMoney)
 
     qf::ObservationSchedule schedule(times);
 
-    qf::GeometricAsianPutPayoff payoff(2.0, schedule);
+    qf::GeometricAsianPutPayoff payoff(2.0, 0.75, schedule);
 
     qf::Path path(times, values);
 
@@ -27,7 +27,7 @@ TEST(GeometricAsianPutPayoff, AtTheMoney)
 
     qf::ObservationSchedule schedule(times);
 
-    qf::GeometricAsianPutPayoff payoff(geometricMean, schedule);
+    qf::GeometricAsianPutPayoff payoff(geometricMean, 0.75, schedule);
 
     qf::Path path(times, values);
 
@@ -43,7 +43,7 @@ TEST(GeometricAsianPutPayoff, InTheMoney)
 
     qf::ObservationSchedule schedule(times);
 
-    qf::GeometricAsianPutPayoff payoff(3.0, schedule);
+    qf::GeometricAsianPutPayoff payoff(3.0, 0.75, schedule);
 
     qf::Path path(times, values);
 

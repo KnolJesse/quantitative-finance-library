@@ -48,7 +48,6 @@ namespace qf
                 times.push_back(currentTime);
             }
 
-            //return Path(std::move(values), std::move(times));
             return Path(times, values); 
         }
 

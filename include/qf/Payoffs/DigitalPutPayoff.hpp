@@ -10,17 +10,25 @@ namespace qf
     class DigitalPutPayoff final : public Payoff
     {
     public:
-        explicit DigitalPutPayoff(double strike, double payout = 1.0) noexcept
+        explicit DigitalPutPayoff(double strike, double maturity, double payout = 1.0) noexcept
             : m_strike(strike)
+            , m_maturity(maturity)
             , m_payout(payout)
         {
             assert(strike > 0.0 && "strike must be greater than zero");
+            assert(maturity > 0.0 && "maturity must be greater than zero");
             assert(payout > 0.0 && "payout must be greater than zero");
         }
 
     public:
         [[nodiscard]]
         double Evaluate(const Path& path) const override;
+
+        [[nodiscard]]
+        double TimeToMaturity() const override;
+
+        [[nodiscard]]
+        std::unique_ptr<Payoff> AdvanceTime(double dt) const override;
 
     public:
         [[nodiscard]]
@@ -37,6 +45,7 @@ namespace qf
 
     private:
         double m_strike = 0.0;
+        double m_maturity = 0.0;
         double m_payout = 0.0;
     };
 }

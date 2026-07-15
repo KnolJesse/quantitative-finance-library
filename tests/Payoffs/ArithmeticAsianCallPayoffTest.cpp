@@ -11,7 +11,7 @@ TEST(ArithmeticAsianCallPayoff, OutOfTheMoney)
 
     qf::ObservationSchedule schedule(times); 
 
-    qf::ArithmeticAsianCallPayoff payoff(105.0, schedule);
+    qf::ArithmeticAsianCallPayoff payoff(105.0, 2.0, schedule);
 
     qf::Path path(times, values);
 
@@ -25,7 +25,7 @@ TEST(ArithmeticAsianCallPayoff, AtTheMoney)
 
     qf::ObservationSchedule schedule(times);
 
-    qf::ArithmeticAsianCallPayoff payoff(100.0, schedule);
+    qf::ArithmeticAsianCallPayoff payoff(100.0, 2.0, schedule);
 
     qf::Path path(times, values);
 
@@ -39,7 +39,7 @@ TEST(ArithmeticAsianCallPayoff, InTheMoney)
 
     qf::ObservationSchedule schedule(times);
 
-    qf::ArithmeticAsianCallPayoff payoff(95.0, schedule);
+    qf::ArithmeticAsianCallPayoff payoff(95.0, 2.0, schedule);
 
     qf::Path path(times, values);
 
@@ -53,7 +53,7 @@ TEST(ArithmeticAsianCallPayoff, AveragesOverObservationSchedule1)
 
     qf::ObservationSchedule schedule({0.25, 0.75});
 
-    qf::ArithmeticAsianCallPayoff payoff(95.0, schedule);
+    qf::ArithmeticAsianCallPayoff payoff(95.0, 1.00, schedule);
 
     qf::Path path(times, values);
 
@@ -67,7 +67,7 @@ TEST(ArithmeticAsianCallPayoff, AveragesOverObservationSchedule2)
 
     qf::ObservationSchedule schedule({ 0.00, 0.50, 1.00 });
 
-    qf::ArithmeticAsianCallPayoff payoff(95.0, schedule);
+    qf::ArithmeticAsianCallPayoff payoff(95.0, 1.00, schedule);
 
     qf::Path path(times, values);
 
